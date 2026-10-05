@@ -1,0 +1,430 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Maize Leaf Disease Detection</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #eef8ee, #dff1df);
+            color: #1f2937;
+        }
+
+        .navbar {
+            width: 100%;
+            padding: 20px 8%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: white;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.06);
+        }
+
+        .logo {
+            font-size: 22px;
+            font-weight: bold;
+            color: #238636;
+        }
+
+        .nav-title {
+            font-size: 14px;
+            color: #6b7280;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 60px 20px 35px;
+        }
+
+        .hero h1 {
+            font-size: 42px;
+            color: #14532d;
+            margin-bottom: 15px;
+        }
+
+        .hero p {
+            max-width: 700px;
+            margin: auto;
+            color: #4b5563;
+            font-size: 17px;
+            line-height: 1.6;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 850px;
+            margin: 20px auto 60px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 35px;
+            box-shadow: 0 10px 35px rgba(0, 0, 0, 0.08);
+        }
+
+        .upload-area {
+            border: 2px dashed #62a86b;
+            border-radius: 16px;
+            padding: 45px 20px;
+            text-align: center;
+            background: #f7fcf7;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .upload-area:hover {
+            background: #eef9ef;
+            border-color: #238636;
+        }
+
+        .upload-icon {
+            font-size: 50px;
+            margin-bottom: 15px;
+        }
+
+        .upload-area h2 {
+            color: #166534;
+            margin-bottom: 8px;
+        }
+
+        .upload-area p {
+            color: #6b7280;
+            margin-bottom: 20px;
+        }
+
+        .upload-button {
+            display: inline-block;
+            padding: 12px 25px;
+            background: #238636;
+            color: white;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        .preview {
+            display: none;
+            margin-top: 25px;
+            text-align: center;
+        }
+
+        .preview img {
+            max-width: 350px;
+            max-height: 350px;
+            border-radius: 15px;
+            object-fit: contain;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.12);
+        }
+
+        .predict-button {
+            display: block;
+            width: 100%;
+            margin-top: 25px;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            background: #166534;
+            color: white;
+            font-size: 17px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .predict-button:hover {
+            background: #14532d;
+        }
+
+        .predict-button:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+        }
+
+        .result {
+            display: none;
+            margin-top: 30px;
+            padding: 25px;
+            border-radius: 15px;
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            text-align: center;
+        }
+
+        .result h2 {
+            color: #166534;
+            margin-bottom: 10px;
+        }
+
+        .disease {
+            font-size: 28px;
+            font-weight: bold;
+            color: #14532d;
+            margin: 10px 0;
+        }
+
+        .confidence {
+            font-size: 18px;
+            color: #4b5563;
+        }
+
+        .info-section {
+            margin-top: 25px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+
+        .info-box {
+            background: white;
+            padding: 20px;
+            border-radius: 14px;
+            text-align: center;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        .info-box strong {
+            display: block;
+            color: #166534;
+            font-size: 20px;
+            margin-bottom: 5px;
+        }
+
+        .info-box span {
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        footer {
+            text-align: center;
+            padding: 25px;
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        @media (max-width: 650px) {
+            .hero h1 {
+                font-size: 30px;
+            }
+
+            .card {
+                padding: 20px;
+            }
+
+            .info-section {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="navbar">
+        <div class="logo">🌽 Maize AI</div>
+        <div class="nav-title">AI-Based Plant Disease Detection</div>
+    </nav>
+
+    <section class="hero">
+        <h1>Maize Leaf Disease Detection</h1>
+        <p>
+            Upload an image of a maize leaf and our deep learning
+            system will analyze it and identify the possible disease.
+        </p>
+    </section>
+
+    <main class="container">
+
+        <div class="card">
+
+            <div class="upload-area" id="uploadArea">
+
+                <div class="upload-icon">🌿</div>
+
+                <h2>Upload Maize Leaf Image</h2>
+
+                <p>
+                    Select a clear image of a maize leaf
+                </p>
+
+                <label for="imageInput" class="upload-button">
+                    Choose Image
+                </label>
+
+                <input
+                    type="file"
+                    id="imageInput"
+                    accept="image/*"
+                >
+
+            </div>
+
+            <div class="preview" id="preview">
+                <h3>Selected Image</h3>
+                <br>
+
+                <img id="previewImage" src="" alt="Leaf Preview">
+            </div>
+
+            <button
+                class="predict-button"
+                id="predictButton"
+                disabled
+            >
+                🔍 Detect Disease
+            </button>
+
+            <div class="result" id="result">
+
+                <h2>Prediction Result</h2>
+
+                <div class="disease" id="disease">
+                    —
+                </div>
+
+                <div class="confidence" id="confidence">
+                    Confidence: —
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="info-section">
+
+            <div class="info-box">
+                <strong>4</strong>
+                <span>Disease Classes</span>
+            </div>
+
+            <div class="info-box">
+                <strong>MobileNetV2</strong>
+                <span>Deep Learning Model</span>
+            </div>
+
+            <div class="info-box">
+                <strong>94.30%</strong>
+                <span>Test Accuracy</span>
+            </div>
+
+        </div>
+
+    </main>
+
+    <footer>
+        Maize Leaf Disease Detection System
+        <br>
+        Powered by Deep Learning & MobileNetV2
+    </footer>
+
+
+    <script>
+
+        const imageInput = document.getElementById("imageInput");
+        const preview = document.getElementById("preview");
+        const previewImage = document.getElementById("previewImage");
+        const predictButton = document.getElementById("predictButton");
+        const result = document.getElementById("result");
+        const disease = document.getElementById("disease");
+        const confidence = document.getElementById("confidence");
+
+
+        imageInput.addEventListener("change", function () {
+
+            const file = this.files[0];
+
+            if (file) {
+
+                const reader = new FileReader();
+
+                reader.onload = function (event) {
+
+                    previewImage.src = event.target.result;
+                    preview.style.display = "block";
+
+                    predictButton.disabled = false;
+
+                    result.style.display = "none";
+
+                };
+
+                reader.readAsDataURL(file);
+            }
+
+        });
+
+
+        predictButton.addEventListener("click", function () {
+
+            if (!imageInput.files[0]) {
+                return;
+            }
+
+            const file = imageInput.files[0];
+
+            if (!file) {
+                return;
+            }
+
+            predictButton.disabled = true;
+            predictButton.textContent = "🔄 Analyzing...";
+
+            const formData = new FormData();
+            formData.append("image", file);
+
+            fetch("/predict", {
+                method: "POST",
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+
+                if (data.error) {
+                    disease.textContent = "Error";
+                    confidence.textContent = data.error;
+                } else {
+                    disease.textContent = data.disease;
+                    confidence.textContent =
+                        "Confidence: " + data.confidence + "%";
+                }
+
+                result.style.display = "block";
+
+            })
+            .catch(error => {
+
+                disease.textContent = "Error";
+                confidence.textContent =
+                    "Unable to process the image.";
+
+                result.style.display = "block";
+
+            })
+            .finally(() => {
+
+                predictButton.disabled = false;
+                predictButton.textContent = "🔍 Detect Disease";
+
+            });
+
+        });
+
+    </script>
+
+</body>
+</html>
