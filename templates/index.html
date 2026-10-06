@@ -1,233 +1,340 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Maize Leaf Disease Detection</title>
+    <title>MaizeGuard AI | Maize Leaf Disease Detection</title>
 
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: Arial, Helvetica, sans-serif;
         }
 
         body {
-            min-height: 100vh;
-            background: linear-gradient(135deg, #eef8ee, #dff1df);
-            color: #1f2937;
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f4f8f4;
+            color: #17351f;
         }
 
         .navbar {
-            width: 100%;
-            padding: 20px 8%;
+            background: #ffffff;
+            border-bottom: 1px solid #e5eee7;
+            padding: 18px 7%;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: white;
-            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.06);
         }
 
         .logo {
             font-size: 22px;
-            font-weight: bold;
-            color: #238636;
+            font-weight: 800;
+            color: #16733a;
         }
 
-        .nav-title {
-            font-size: 14px;
-            color: #6b7280;
+        .badge {
+            background: #e9f7ed;
+            color: #16733a;
+            padding: 8px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
         }
 
         .hero {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 70px 25px 45px;
             text-align: center;
-            padding: 60px 20px 35px;
         }
 
         .hero h1 {
-            font-size: 42px;
-            color: #14532d;
-            margin-bottom: 15px;
+            font-size: clamp(38px, 6vw, 64px);
+            line-height: 1.05;
+            margin-bottom: 20px;
+            color: #123c20;
+        }
+
+        .hero h1 span {
+            color: #1c9148;
         }
 
         .hero p {
             max-width: 700px;
             margin: auto;
-            color: #4b5563;
-            font-size: 17px;
-            line-height: 1.6;
+            font-size: 18px;
+            line-height: 1.7;
+            color: #607064;
         }
 
-        .container {
-            width: 90%;
-            max-width: 850px;
-            margin: 20px auto 60px;
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 18px;
+            flex-wrap: wrap;
+            margin-top: 35px;
+        }
+
+        .stat {
+            background: white;
+            border: 1px solid #e2ece4;
+            border-radius: 16px;
+            padding: 18px 28px;
+            min-width: 150px;
+            box-shadow: 0 8px 25px rgba(30, 80, 45, 0.06);
+        }
+
+        .stat strong {
+            display: block;
+            font-size: 24px;
+            color: #16733a;
+        }
+
+        .stat span {
+            font-size: 13px;
+            color: #718074;
+        }
+
+        .detector {
+            max-width: 1000px;
+            margin: 25px auto 70px;
+            padding: 0 25px;
         }
 
         .card {
             background: white;
-            border-radius: 20px;
+            border-radius: 28px;
             padding: 35px;
-            box-shadow: 0 10px 35px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 18px 50px rgba(30, 80, 45, 0.10);
+            border: 1px solid #e3ece5;
         }
 
         .upload-area {
-            border: 2px dashed #62a86b;
-            border-radius: 16px;
-            padding: 45px 20px;
+            border: 2px dashed #9ac8a8;
+            border-radius: 22px;
+            min-height: 330px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             text-align: center;
-            background: #f7fcf7;
             cursor: pointer;
-            transition: 0.3s;
+            transition: 0.25s;
+            overflow: hidden;
+            background: #f9fcf9;
         }
 
         .upload-area:hover {
-            background: #eef9ef;
-            border-color: #238636;
+            border-color: #1c9148;
+            background: #f2faf4;
+        }
+
+        .upload-content {
+            padding: 35px;
         }
 
         .upload-icon {
-            font-size: 50px;
+            font-size: 55px;
             margin-bottom: 15px;
         }
 
-        .upload-area h2 {
-            color: #166534;
+        .upload-content h2 {
             margin-bottom: 8px;
         }
 
-        .upload-area p {
-            color: #6b7280;
+        .upload-content p {
+            color: #718074;
             margin-bottom: 20px;
         }
 
-        .upload-button {
+        .browse {
             display: inline-block;
-            padding: 12px 25px;
-            background: #238636;
+            background: #16733a;
             color: white;
-            border-radius: 8px;
-            font-weight: bold;
-            cursor: pointer;
+            padding: 12px 22px;
+            border-radius: 12px;
+            font-weight: 700;
         }
 
-        input[type="file"] {
+        #preview {
+            max-width: 100%;
+            max-height: 320px;
             display: none;
-        }
-
-        .preview {
-            display: none;
-            margin-top: 25px;
-            text-align: center;
-        }
-
-        .preview img {
-            max-width: 350px;
-            max-height: 350px;
-            border-radius: 15px;
             object-fit: contain;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.12);
         }
 
-        .predict-button {
-            display: block;
+        #imageInput {
+            display: none;
+        }
+
+        .detect-btn {
             width: 100%;
-            margin-top: 25px;
-            padding: 15px;
+            margin-top: 22px;
+            padding: 16px;
             border: none;
-            border-radius: 10px;
-            background: #166534;
+            border-radius: 14px;
+            background: #16733a;
             color: white;
             font-size: 17px;
-            font-weight: bold;
+            font-weight: 700;
             cursor: pointer;
-            transition: 0.3s;
+            transition: 0.2s;
         }
 
-        .predict-button:hover {
-            background: #14532d;
+        .detect-btn:hover {
+            background: #105b2d;
+            transform: translateY(-1px);
         }
 
-        .predict-button:disabled {
-            background: #9ca3af;
+        .detect-btn:disabled {
+            background: #9bb6a2;
             cursor: not-allowed;
+            transform: none;
         }
 
         .result {
             display: none;
-            margin-top: 30px;
-            padding: 25px;
-            border-radius: 15px;
-            background: #f0fdf4;
-            border: 1px solid #bbf7d0;
-            text-align: center;
+            margin-top: 28px;
+            padding: 28px;
+            border-radius: 20px;
+            background: #f2faf4;
+            border: 1px solid #d8ebdc;
         }
 
         .result h2 {
-            color: #166534;
+            color: #16733a;
             margin-bottom: 10px;
-        }
-
-        .disease {
-            font-size: 28px;
-            font-weight: bold;
-            color: #14532d;
-            margin: 10px 0;
         }
 
         .confidence {
             font-size: 18px;
-            color: #4b5563;
+            margin-bottom: 22px;
         }
 
-        .info-section {
-            margin-top: 25px;
+        .probability {
+            margin: 13px 0;
+        }
+
+        .probability-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 6px;
+            font-size: 14px;
+        }
+
+        .bar {
+            height: 9px;
+            background: #dce9df;
+            border-radius: 20px;
+            overflow: hidden;
+        }
+
+        .bar-fill {
+            height: 100%;
+            width: 0%;
+            background: #1c9148;
+            border-radius: 20px;
+            transition: width 0.6s ease;
+        }
+
+        .classes {
+            max-width: 1000px;
+            margin: 0 auto 70px;
+            padding: 0 25px;
+        }
+
+        .classes h2 {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .class-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(4, 1fr);
             gap: 15px;
         }
 
-        .info-box {
+        .class-card {
             background: white;
-            padding: 20px;
-            border-radius: 14px;
+            border: 1px solid #e3ece5;
+            padding: 22px;
+            border-radius: 16px;
             text-align: center;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
         }
 
-        .info-box strong {
-            display: block;
-            color: #166534;
-            font-size: 20px;
-            margin-bottom: 5px;
+        .class-card .icon {
+            font-size: 32px;
+            margin-bottom: 10px;
         }
 
-        .info-box span {
-            color: #6b7280;
+        .class-card p {
+            color: #536158;
             font-size: 14px;
+        }
+
+        .about {
+            background: #123c20;
+            color: white;
+            padding: 55px 25px;
+        }
+
+        .about-inner {
+            max-width: 900px;
+            margin: auto;
+            text-align: center;
+        }
+
+        .about h2 {
+            margin-bottom: 15px;
+        }
+
+        .about p {
+            color: #d5e7d9;
+            line-height: 1.8;
         }
 
         footer {
+            background: #0c2915;
+            color: #a9c1ae;
             text-align: center;
-            padding: 25px;
-            color: #6b7280;
-            font-size: 14px;
+            padding: 22px;
+            font-size: 13px;
         }
 
-        @media (max-width: 650px) {
-            .hero h1 {
-                font-size: 30px;
+        .loading {
+            display: none;
+            margin-top: 15px;
+            text-align: center;
+            color: #16733a;
+            font-weight: 600;
+        }
+
+        @media (max-width: 750px) {
+            .class-grid {
+                grid-template-columns: repeat(2, 1fr);
             }
 
             .card {
                 padding: 20px;
             }
 
-            .info-section {
+            .hero {
+                padding-top: 50px;
+            }
+        }
+
+        @media (max-width: 450px) {
+            .class-grid {
                 grid-template-columns: 1fr;
+            }
+
+            .stats {
+                flex-direction: column;
+            }
+
+            .stat {
+                width: 100%;
             }
         }
     </style>
@@ -235,196 +342,278 @@
 
 <body>
 
-    <nav class="navbar">
-        <div class="logo">🌽 Maize AI</div>
-        <div class="nav-title">AI-Based Plant Disease Detection</div>
-    </nav>
+<nav class="navbar">
+    <div class="logo">🌽 MaizeGuard AI</div>
+    <div class="badge">AI Disease Detection</div>
+</nav>
 
-    <section class="hero">
-        <h1>Maize Leaf Disease Detection</h1>
-        <p>
-            Upload an image of a maize leaf and our deep learning
-            system will analyze it and identify the possible disease.
-        </p>
-    </section>
+<section class="hero">
+    <h1>Protect Your Maize<br><span>With AI</span></h1>
 
-    <main class="container">
+    <p>
+        Upload a maize leaf image and let our MobileNetV2 deep learning
+        model identify common maize leaf diseases in seconds.
+    </p>
 
-        <div class="card">
+    <div class="stats">
+        <div class="stat">
+            <strong>94.30%</strong>
+            <span>Test Accuracy</span>
+        </div>
 
-            <div class="upload-area" id="uploadArea">
+        <div class="stat">
+            <strong>4</strong>
+            <span>Disease Classes</span>
+        </div>
 
-                <div class="upload-icon">🌿</div>
+        <div class="stat">
+            <strong>224×224</strong>
+            <span>Input Resolution</span>
+        </div>
+    </div>
+</section>
 
-                <h2>Upload Maize Leaf Image</h2>
+<section class="detector">
+
+    <div class="card">
+
+        <div class="upload-area" id="uploadArea">
+
+            <div class="upload-content" id="uploadContent">
+                <div class="upload-icon">📷</div>
+
+                <h2>Upload a Maize Leaf</h2>
 
                 <p>
-                    Select a clear image of a maize leaf
+                    Choose a clear image of a maize leaf
                 </p>
 
-                <label for="imageInput" class="upload-button">
-                    Choose Image
-                </label>
-
-                <input
-                    type="file"
-                    id="imageInput"
-                    accept="image/*"
-                >
-
+                <span class="browse">Browse Image</span>
             </div>
 
-            <div class="preview" id="preview">
-                <h3>Selected Image</h3>
-                <br>
+            <img id="preview" alt="Leaf preview">
 
-                <img id="previewImage" src="" alt="Leaf Preview">
+        </div>
+
+        <input
+            type="file"
+            id="imageInput"
+            accept="image/*"
+        >
+
+        <button
+            class="detect-btn"
+            id="detectButton"
+            disabled
+        >
+            🔍 Detect Disease
+        </button>
+
+        <div class="loading" id="loading">
+            Analyzing leaf image...
+        </div>
+
+        <div class="result" id="result">
+
+            <h2 id="diseaseResult">Disease</h2>
+
+            <div class="confidence" id="confidenceResult">
+                Confidence: 0%
             </div>
 
-            <button
-                class="predict-button"
-                id="predictButton"
-                disabled
-            >
-                🔍 Detect Disease
-            </button>
+            <h3>Prediction Probabilities</h3>
 
-            <div class="result" id="result">
-
-                <h2>Prediction Result</h2>
-
-                <div class="disease" id="disease">
-                    —
+            <div class="probability">
+                <div class="probability-header">
+                    <span>Blight</span>
+                    <span id="p0">0%</span>
                 </div>
-
-                <div class="confidence" id="confidence">
-                    Confidence: —
+                <div class="bar">
+                    <div class="bar-fill" id="bar0"></div>
                 </div>
+            </div>
 
+            <div class="probability">
+                <div class="probability-header">
+                    <span>Common Rust</span>
+                    <span id="p1">0%</span>
+                </div>
+                <div class="bar">
+                    <div class="bar-fill" id="bar1"></div>
+                </div>
+            </div>
+
+            <div class="probability">
+                <div class="probability-header">
+                    <span>Gray Leaf Spot</span>
+                    <span id="p2">0%</span>
+                </div>
+                <div class="bar">
+                    <div class="bar-fill" id="bar2"></div>
+                </div>
+            </div>
+
+            <div class="probability">
+                <div class="probability-header">
+                    <span>Healthy</span>
+                    <span id="p3">0%</span>
+                </div>
+                <div class="bar">
+                    <div class="bar-fill" id="bar3"></div>
+                </div>
             </div>
 
         </div>
 
-        <div class="info-section">
+    </div>
 
-            <div class="info-box">
-                <strong>4</strong>
-                <span>Disease Classes</span>
-            </div>
+</section>
 
-            <div class="info-box">
-                <strong>MobileNetV2</strong>
-                <span>Deep Learning Model</span>
-            </div>
+<section class="classes">
 
-            <div class="info-box">
-                <strong>94.30%</strong>
-                <span>Test Accuracy</span>
-            </div>
+    <h2>Supported Classes</h2>
 
+    <div class="class-grid">
+
+        <div class="class-card">
+            <div class="icon">🦠</div>
+            <h3>Blight</h3>
+            <p>Common maize leaf disease</p>
         </div>
 
-    </main>
+        <div class="class-card">
+            <div class="icon">🍂</div>
+            <h3>Common Rust</h3>
+            <p>Fungal disease affecting leaves</p>
+        </div>
 
-    <footer>
-        Maize Leaf Disease Detection System
-        <br>
-        Powered by Deep Learning & MobileNetV2
-    </footer>
+        <div class="class-card">
+            <div class="icon">🍁</div>
+            <h3>Gray Leaf Spot</h3>
+            <p>Important fungal leaf disease</p>
+        </div>
 
+        <div class="class-card">
+            <div class="icon">🌿</div>
+            <h3>Healthy</h3>
+            <p>No detected disease</p>
+        </div>
 
-    <script>
+    </div>
 
-        const imageInput = document.getElementById("imageInput");
-        const preview = document.getElementById("preview");
-        const previewImage = document.getElementById("previewImage");
-        const predictButton = document.getElementById("predictButton");
-        const result = document.getElementById("result");
-        const disease = document.getElementById("disease");
-        const confidence = document.getElementById("confidence");
+</section>
 
+<section class="about">
 
-        imageInput.addEventListener("change", function () {
+    <div class="about-inner">
 
-            const file = this.files[0];
+        <h2>About the Model</h2>
 
-            if (file) {
+        <p>
+            MaizeGuard AI uses a MobileNetV2-based deep learning model
+            trained to classify maize leaves into four categories:
+            Blight, Common Rust, Gray Leaf Spot, and Healthy.
+            The model achieved 94.30% accuracy on the held-out test dataset.
+        </p>
 
-                const reader = new FileReader();
+    </div>
 
-                reader.onload = function (event) {
+</section>
 
-                    previewImage.src = event.target.result;
-                    preview.style.display = "block";
+<footer>
+    MaizeGuard AI · Maize Leaf Disease Detection · Powered by MobileNetV2
+</footer>
 
-                    predictButton.disabled = false;
+<script>
 
-                    result.style.display = "none";
+    const uploadArea = document.getElementById("uploadArea");
+    const uploadContent = document.getElementById("uploadContent");
+    const imageInput = document.getElementById("imageInput");
+    const preview = document.getElementById("preview");
+    const detectButton = document.getElementById("detectButton");
+    const result = document.getElementById("result");
+    const loading = document.getElementById("loading");
 
-                };
+    let selectedFile = null;
 
-                reader.readAsDataURL(file);
-            }
+    uploadArea.addEventListener("click", function() {
+        imageInput.click();
+    });
 
-        });
+    imageInput.addEventListener("change", function() {
 
+        const file = this.files[0];
 
-        predictButton.addEventListener("click", function () {
+        if (!file) {
+            return;
+        }
 
-            if (!imageInput.files[0]) {
-                return;
-            }
+        selectedFile = file;
 
-            const file = imageInput.files[0];
+        const reader = new FileReader();
 
-            if (!file) {
-                return;
-            }
+        reader.onload = function(e) {
 
-            predictButton.disabled = true;
-            predictButton.textContent = "🔄 Analyzing...";
+            preview.src = e.target.result;
 
-            const formData = new FormData();
-            formData.append("image", file);
+            preview.style.display = "block";
+            uploadContent.style.display = "none";
 
-            fetch("/predict", {
+            detectButton.disabled = false;
+            result.style.display = "none";
+        };
+
+        reader.readAsDataURL(file);
+    });
+
+    detectButton.addEventListener("click", async function() {
+
+        if (!selectedFile) {
+            return;
+        }
+
+        const formData = new FormData();
+
+        formData.append("image", selectedFile);
+
+        detectButton.disabled = true;
+        loading.style.display = "block";
+        result.style.display = "none";
+
+        try {
+
+            const response = await fetch("/predict", {
                 method: "POST",
                 body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-
-                if (data.error) {
-                    disease.textContent = "Error";
-                    confidence.textContent = data.error;
-                } else {
-                    disease.textContent = data.disease;
-                    confidence.textContent =
-                        "Confidence: " + data.confidence + "%";
-                }
-
-                result.style.display = "block";
-
-            })
-            .catch(error => {
-
-                disease.textContent = "Error";
-                confidence.textContent =
-                    "Unable to process the image.";
-
-                result.style.display = "block";
-
-            })
-            .finally(() => {
-
-                predictButton.disabled = false;
-                predictButton.textContent = "🔍 Detect Disease";
-
             });
 
-        });
+            const data = await response.json();
 
-    </script>
+            if (!response.ok) {
+                throw new Error(data.error || "Prediction failed");
+            }
+
+            document.getElementById("diseaseResult").textContent =
+                "🌿 " + data.disease;
+
+            document.getElementById("confidenceResult").textContent =
+                "Confidence: " + data.confidence.toFixed(2) + "%";
+
+            result.style.display = "block";
+
+        } catch (error) {
+
+            alert("Error: " + error.message);
+
+        } finally {
+
+            detectButton.disabled = false;
+            loading.style.display = "none";
+        }
+
+    });
+
+</script>
 
 </body>
 </html>
