@@ -12,7 +12,7 @@
 
 ## 🚀 Live Demo
 
-🌐 **[Open the Maize Disease Detection Web App](#)**
+🌐 file:///E:/Picture/maize_leaf_disease_detection_app.html
 
 > Upload a maize leaf image and the AI model will predict the disease along with its confidence score.
 
