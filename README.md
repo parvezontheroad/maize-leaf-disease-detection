@@ -10,16 +10,6 @@
 
 ---
 
-## 🚀 Live Demo
-
-🌐 file:///E:/Picture/maize_leaf_disease_detection_app.html
-
-> Upload a maize leaf image and the AI model will predict the disease along with its confidence score.
-
-**Note:** The live demo link will be added after permanent deployment.
-
----
-
 ## 📌 About the Project
 
 **Maize Leaf Disease Detection** is an AI-based web application designed to automatically identify common maize leaf diseases from images.
